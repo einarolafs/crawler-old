@@ -2,6 +2,12 @@ var cheerio = require('cheerio');
 var request = require('request');
 var fs = require("fs");
 
+//Store the terms database to use to search for sentences in the crawled content
+var terms = fs.readFileSync('terms.json');
+  terms = JSON.parse(terms);
+
+
+
 reg = request.defaults({
   jar:true,
   rejectUnauthorized: false,
@@ -38,7 +44,11 @@ reg.get({
 
 
     var $source_body = $('body');
+
+    //Remove move any script tags and their content if they have been added into the body
     $source_body.find("script").remove();
+
+    //Search for all elements and get their text
     var $content = $source_body.find("*").text();
 
 
@@ -46,7 +56,30 @@ reg.get({
     //see the output of the body content
     WriteTo("source.html", $('body'));
 
-    $content = $content.replace(/\s\s+/g, ' ');
+    var log_term_position = {};
+    var terms_found = {};
+
+    for (var term in terms) {
+      
+      //Find the position of the term in the body content and store in this varible
+      var term_position = $content.indexOf(term);
+
+      //log the posiiton of all serached terms in a json file;
+      log_term_position[term] = term_position;
+
+      //Only return terms and words found in the terms.json file, term_position will return -1 if nothing was found
+      if($content.indexOf(term) >= 0) {
+        terms_found[term] = term_position;
+      }
+
+    }
+
+    //write out a log file for all terms and their position, -1 if not found
+    WriteTo("logtermsfound.json", log_term_position, true);
+    WriteTo("termsfound.json", terms_found, true);
+
+
+    /*$content = $content.replace(/\s\s+/g, ' ');
 
     $content = $content.split(" ");
 
@@ -65,12 +98,12 @@ reg.get({
         else {
           $contentObj[$content[i]] = 1;
         }
-    }
+    }*/
 
 
-        fs.writeFile( "words.json", JSON.stringify($contentObj, null, 2), "utf8", function (err){
+      /*  fs.writeFile( "words.json", JSON.stringify($contentObj, null, 2), "utf8", function (err){
           if (err) return console.log(err);
-        });
+        });*/
 
   }
   else {

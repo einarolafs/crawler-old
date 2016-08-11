@@ -1,27 +1,29 @@
+//This function gets all the terms found in the terms folder and creates one object out of them all and saves in a single JSON file. The terms can than be used to search trough crawled data for relivent words and sentances.
+
 var fs = require('fs');
 var terms = fs.readFileSync('terms.json');
 terms = JSON.parse(terms);
 
-console.log(terms);
-
-// https://stackoverflow.com/questions/5364928/node-js-require-all-files-in-a-folder
-
-var normalizedPath = require("path").join(__dirname, "terms");
+var getPath = require("path").join(__dirname, "terms");
 
 
-
-fs.readdirSync(normalizedPath).forEach(function(file) {
+//Get a list of all the files in the terms folder 
+fs.readdirSync(getPath).forEach(function(file) {
 
     var termfile = fs.readFileSync("./terms/" + file);
     termfile = JSON.parse(termfile);
 
-    terms = Object.assign(terms, termfile);
+    if (typeof termfile === 'object'){
 
-    console.log(file);
+    	//Join object from each file with the terms object
+    	terms = Object.assign(terms, termfile);
+	}
+
 
 
 });
 
+//Write the joined object to a JSON file
 fs.writeFile('terms.json', JSON.stringify(terms), "utf8", function (err){
 		      if (err) return console.log(err);
 });
