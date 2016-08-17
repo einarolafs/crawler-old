@@ -37,7 +37,7 @@ reg.get({
 
 
  //write the response to a file
-    WriteTo("response.json", response, true);
+    WriteTo("./tmp/response.json", response, true);
 
     let $ = cheerio.load(body);
 
@@ -54,7 +54,7 @@ reg.get({
 
 
     //see the output of the body content
-    WriteTo("source.html", $('body'));
+    WriteTo("./tmp/source.html", $('body'));
 
     var log_term_position = {};
     var terms_found = {};
@@ -65,7 +65,7 @@ reg.get({
       var term_position = $content.indexOf(term);
 
       //log the posiiton of all serached terms in a json file;
-      log_term_position[term] = term_position;
+      //log_term_position[term] = term_position;
 
       //Only return terms and words found in the terms.json file, term_position will return -1 if nothing was found
       if($content.indexOf(term) >= 0) {
@@ -75,8 +75,8 @@ reg.get({
     }
 
     //write out a log file for all terms and their position, -1 if not found
-    WriteTo("logtermsfound.json", log_term_position, true);
-    WriteTo("termsfound.json", terms_found, true);
+    //WriteTo("logtermsfound.json", log_term_position, true);
+    WriteTo("./tmp/termsfound.json", terms_found, true);
 
 
     /*$content = $content.replace(/\s\s+/g, ' ');
