@@ -2,9 +2,7 @@
 
 const fs = require('fs');
 
-let terms = fs.readFileSync('terms.json');
-
-terms = JSON.parse(terms);
+terms = {};
 
 const getPath = require("path").join(__dirname, "terms");
 
