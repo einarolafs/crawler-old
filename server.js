@@ -2,6 +2,17 @@ var cheerio = require('cheerio');
 var request = require('request');
 var fs = require("fs");
 
+//Create a folder for temporary files meant to be used during development
+var createTmpFolder = function(){
+  var dir = './tmp';
+
+  if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+  }
+}
+
+createTmpFolder();
+
 //Store the terms database to use to search for sentences in the crawled content
 var terms = fs.readFileSync('terms.json');
   terms = JSON.parse(terms);

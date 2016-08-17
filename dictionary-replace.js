@@ -1,13 +1,5 @@
 var fs = require('fs');
 
-var createTmpFolder(){
-	var dir = './tmp';
-
-	if (!fs.existsSync(dir)){
-	    fs.mkdirSync(dir);
-	}
-}
-
 
 var getDictionary = function(word, data){
 
