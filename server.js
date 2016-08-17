@@ -39,7 +39,7 @@ function WriteTo(filename, content, json = false){
 }
 
 reg.get({
-  url: 'http://www.w3schools.com/jsref/jsref_touppercase.asp',
+  url: 'https://en.wikipedia.org/wiki/HMS_Formidable_(67)',
   header : {
     'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36'
   },
@@ -68,7 +68,7 @@ reg.get({
     WriteTo("./tmp/source.html", $('body'));
 
     // var log_term_position = {};
-    // var terms_found = {};
+     var terms_found = {};
 
     for (var term in terms) {
       
