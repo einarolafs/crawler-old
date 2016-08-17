@@ -1,15 +1,15 @@
-var fs = require('fs');
+const fs = require('fs');
 
 
 var getDictionary = function(word, data){
 
-	var dicfile = fs.readFileSync(data);
-	var wordfile = fs.readFileSync(word);
+	const dicfile = fs.readFileSync(data);
+	const wordfile = fs.readFileSync(word);
 
-	var dicContent = JSON.parse(dicfile);
-	var wordContent = JSON.parse(wordfile);
+	const dicContent = JSON.parse(dicfile);
+	const wordContent = JSON.parse(wordfile);
 
-	var i = 0;
+	let i = 0;
 
 	for(var wordKey in wordContent) {
 		  //dictionaryWords[exKey] = true;
@@ -33,7 +33,7 @@ var getDictionary = function(word, data){
 
 	 //dictionaryWords = dictionaryWords.sort();
 
-	 console.log(wordContent["AngularJS"]);
+	 //console.log(wordContent["AngularJS"]);
 
 	 /*fs.writeFile('dicwords.json', JSON.stringify(dictionaryWords), "utf8", function (err){
 		      if (err) return console.log(err);

@@ -1,6 +1,6 @@
-var cheerio = require('cheerio');
-var request = require('request');
-var fs = require("fs");
+const cheerio = require('cheerio');
+const request = require('request');
+const fs = require("fs");
 
 //Create a folder for temporary files meant to be used during development
 var createTmpFolder = function(){
@@ -14,7 +14,7 @@ var createTmpFolder = function(){
 createTmpFolder();
 
 //Store the terms database to use to search for sentences in the crawled content
-var terms = fs.readFileSync('terms.json');
+let terms = fs.readFileSync('terms.json');
   terms = JSON.parse(terms);
 
 
@@ -54,26 +54,26 @@ reg.get({
 
 
 
-    var $source_body = $('body');
+    const $source_body = $('body');
 
     //Remove move any script tags and their content if they have been added into the body
     $source_body.find("script").remove();
 
     //Search for all elements and get their text
-    var $content = $source_body.find("*").text();
+    const $content = $source_body.find("*").text();
 
 
 
     //see the output of the body content
     WriteTo("./tmp/source.html", $('body'));
 
-    var log_term_position = {};
-    var terms_found = {};
+    // var log_term_position = {};
+    // var terms_found = {};
 
     for (var term in terms) {
       
       //Find the position of the term in the body content and store in this varible
-      var term_position = $content.indexOf(term);
+      const term_position = $content.indexOf(term);
 
       //log the posiiton of all serached terms in a json file;
       //log_term_position[term] = term_position;
