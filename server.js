@@ -62,31 +62,64 @@ reg.get({
     //Search for all elements and get their text
     const $content = $source_body.find("*").text();
 
+    WriteTo("./tmp/content.txt", $content, false);
+
 
 
     //see the output of the body content
     WriteTo("./tmp/source.html", $('body'));
 
-    // var log_term_position = {};
+     var log_term_position = {};
      var terms_found = {};
+
+    var regexEscape = function(str) {
+      return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+    }
+
+    var reg_term = function(term) {
+      
+      var flags;
+      flags = 'gi';
+      //console.log(term);
+      term = regexEscape(term);
+      //console.log(term);
+      return new RegExp('\\b(' + term + ')\\b', flags)
+
+    };
+
+    var search_for_match = $content.match(reg_term('after'));
+
+    //console.log(search_for_match);
+
 
     for (var term in terms) {
       
       //Find the position of the term in the body content and store in this varible
-      const term_position = $content.indexOf(term);
+      //console.log(term);
+
+
+      var search_for_match = $content.match(reg_term(term));
+
+      if (search_for_match != null) {
+        terms_found[term] = search_for_match.length;
+      }
+        
+      
+
+      //const term_position = $content.indexOf(term);
 
       //log the posiiton of all serached terms in a json file;
       //log_term_position[term] = term_position;
 
       //Only return terms and words found in the terms.json file, term_position will return -1 if nothing was found
-      if($content.indexOf(term) >= 0) {
+      /*if($content.indexOf(term) >= 0) {
         terms_found[term] = term_position;
-      }
+      }*/
 
     }
 
     //write out a log file for all terms and their position, -1 if not found
-    //WriteTo("logtermsfound.json", log_term_position, true);
+    //WriteTo("./tmp/logtermsfound.json", log_term_position, true);
     WriteTo("./tmp/termsfound.json", terms_found, true);
 
 
