@@ -23,7 +23,20 @@ fs.readdirSync(getPath).forEach(function(file) {
 
 });
 
+//Create a folder for temporary files meant to be used during development
+var createTmpFolder = function()
+{
+    var dir = './tmp';
+
+    if (!fs.existsSync(dir))
+    {
+        fs.mkdirSync(dir);
+    }
+}
+
+createTmpFolder();
+
 //Write the joined object to a JSON file
-fs.writeFile('terms.json', JSON.stringify(terms), "utf8", function (err){
+fs.writeFile('./tmp/terms.json', JSON.stringify(terms), "utf8", function (err){
 		      if (err) return console.log(err);
 });
