@@ -22,13 +22,8 @@ fs.readdirSync(getPath).forEach(function(file) {
     	//Join object from each file with the terms object
     	//terms = Object.assign(terms, termfile);
         for (term in termfile) {
-            if(!terms.hasOwnProperty(term_name)) {
-                terms[term_name] = {};
+                terms[term_name] = terms[term_name] || {};
                 terms[term_name][termfile[term]] = true;
-            }
-            else {
-                terms[term_name][termfile[term]] = true;
-            }
         }
 
 	}
