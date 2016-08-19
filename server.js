@@ -45,11 +45,13 @@ function WriteTo(filename, content, json = false)
         });
     }
 
+    //console.log("writing: " + filename);
+
 }
 
 reg.get(
 {
-    url: 'https://en.wikipedia.org/wiki/HMS_Formidable_(67)',
+    url: 'http://berlinstartupjobs.com/engineering/senior-backend-developer-hellofresh/',
     header:
     {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36'
@@ -70,10 +72,11 @@ reg.get(
         const $source_body = $('body');
 
         //Remove move any script tags and their content if they have been added into the body
-        $source_body.find("script").remove();
+        $source_body.find("script, .tagcloud, [class*=nav], header, [class*=header], [class*=menu], link, nav, [class*=fb-root], [class*=footer], footer, [class*=extras], [class*=banner], img, [class*=widget]").remove();
 
         //Search for all elements and get their text
-        const $content = $source_body.find("*").text();
+        const $content = $source_body.html().replace(/<[^>]*>/gi, " ");
+
 
         WriteTo("./tmp/content.txt", $content, false);
 
