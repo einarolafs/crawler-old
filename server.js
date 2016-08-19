@@ -74,7 +74,7 @@ reg.get(
         //Remove move any script tags and their content if they have been added into the body
         $source_body.find("script, .tagcloud, [class*=nav], header, [class*=header], [class*=menu], link, nav, [class*=fb-root], [class*=footer], footer, [class*=extras], [class*=banner], img, [class*=widget]").remove();
 
-        //Search for all elements and get their text
+        //Make the DOM static and remove all tags to leave only behind the text to use for the search
         const $content = $source_body.html().replace(/<[^>]*>/gi, " ");
 
 
@@ -105,19 +105,34 @@ reg.get(
 
         };
 
-        var search_for_match = $content.match(reg_term('after'));
 
-        //console.log(search_for_match);
-
-
-        for (var term in terms)
+        for (var term_type in terms)
         {
 
-            var search_for_match = $content.match(reg_term(term));
+            //console.log(typeof terms[term_type]);
 
-            if (search_for_match != null)
+            for (var term in terms[term_type])
             {
-                terms_found[term] = search_for_match.length;
+
+
+                //console.log(terms[term_type]);
+              //  console.log(term);
+                //Turn all terms to uppercase to make sure if a word was added to the term file twice in different case settings that it is only mentioned once when collected
+                search_term = term.toUpperCase();
+
+                //Search for a metch using a function that looks throught all of the text for the term, will return null if nothing is found.
+                var search_for_match = $content.match(reg_term(search_term));
+
+                //If something is found add it to the object terms_found to be stored in a jons file later
+                if (search_for_match != null)
+                {
+                    var add_term = terms_found[search_term] = terms_found[search_term] || {};
+
+                    add_term['term_type'] = add_term['term_type'] || {};
+                    add_term['term_type'][term_type] = search_for_match.length;
+
+
+                }
             }
 
 
