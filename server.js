@@ -16,7 +16,7 @@ var createTmpFolder = function()
 createTmpFolder();
 
 //Store the terms database to use to search for sentences in the crawled content
-let terms = fs.readFileSync('terms.json');
+let terms = fs.readFileSync('./tmp/terms.json');
 terms = JSON.parse(terms);
 
 
