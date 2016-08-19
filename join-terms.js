@@ -13,10 +13,24 @@ fs.readdirSync(getPath).forEach(function(file) {
     let termfile = fs.readFileSync("./terms/" + file);
     termfile = JSON.parse(termfile);
 
+    //console.log("typeof: " + typeof termfile);
+    term_name = file.replace(".json", "");
+   // console.log(termfile);
+
     if (typeof termfile === 'object'){
 
     	//Join object from each file with the terms object
-    	terms = Object.assign(terms, termfile);
+    	//terms = Object.assign(terms, termfile);
+        for (term in termfile) {
+            if(!terms.hasOwnProperty(term_name)) {
+                terms[term_name] = {};
+                terms[term_name][termfile[term]] = true;
+            }
+            else {
+                terms[term_name][termfile[term]] = true;
+            }
+        }
+
 	}
 
 
