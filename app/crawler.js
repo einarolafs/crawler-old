@@ -8,45 +8,13 @@ var tools = require(appRoot + '/app/tools.js');
 let terms = fs.readFileSync(appRoot + '/tmp/terms.json');
 terms = JSON.parse(terms);
 
-
-var crawl = function(url, header)
-{
-    reg = request.defaults(
-    {
-        jar: true,
-        rejectUnauthorized: false,
-        followAllRedirects: true
-    });
-
-
-
-    reg.get(
-    {
-        url: 'http://berlinstartupjobs.com/engineering/senior-backend-developer-hellofresh/',
-        header:
-        {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36'
-        },
-    }, function(error, response, body)
-    {
-        if (!error && response.statusCode == 200)
-        {
-
-
-            //write the response to a file
-            //tools.writeToFile(appRoot + '/tmp/response.json', response, true);
-
-            let $ = cheerio.load(body);
-
-
-
-            const $source_body = $('body');
+var collect = function(source_body) {
 
             //Remove move any script tags and their content if they have been added into the body
-            $source_body.find('script, .tagcloud, [class*=nav], header, [class*=header], [class*=menu], link, nav, [class*=fb-root], [class*=footer], footer, [class*=extras], [class*=banner], img, [class*=widget]').remove();
+            source_body.find('script, .tagcloud, [class*=nav], header, [class*=header], [class*=menu], link, nav, [class*=fb-root], [class*=footer], footer, [class*=extras], [class*=banner], img, [class*=widget]').remove();
 
             //Make the DOM static and remove all tags to leave only behind the text to use for the search
-            const $content = $source_body.html().replace(/<[^>]*>/gi, ' ');
+            const $content = source_body.html().replace(/<[^>]*>/gi, ' ');
 
 
             //tools.writeToFile(appRoot + '/tmp/content.txt', $content, false);
@@ -56,7 +24,6 @@ var crawl = function(url, header)
             //see the output of the body content
             //tools.writeToFile(appRoot + '/tmp/source.html', $('body'));
 
-            var log_term_position = {};
             var terms_found = {};
 
             var regexEscape = function(str)
@@ -114,6 +81,42 @@ var crawl = function(url, header)
             //write out a log file for all terms and their position, -1 if not found
             //tools.writeToFile(appRoot + '/tmp/logtermsfound.json', log_term_position, true);
             tools.writeToFile(appRoot + '/tmp/termsfound.json', terms_found, true);
+}
+
+
+var crawl = function(url, header)
+{
+    reg = request.defaults(
+    {
+        jar: true,
+        rejectUnauthorized: false,
+        followAllRedirects: true
+    });
+
+
+
+    reg.get(
+    {
+        url: 'http://berlinstartupjobs.com/engineering/senior-backend-developer-hellofresh/',
+        header:
+        {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36'
+        },
+    }, function(error, response, body)
+    {
+        if (!error && response.statusCode == 200)
+        {
+
+
+            //write the response to a file
+            //tools.writeToFile(appRoot + '/tmp/response.json', response, true);
+
+            let $ = cheerio.load(body);
+
+            const $source_body = $('body');
+
+            collect($source_body);
+
 
         }
         else
