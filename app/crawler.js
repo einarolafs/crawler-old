@@ -11,92 +11,94 @@ terms = JSON.parse(terms);
 
 let stop = 0;
 
-var collect = function(source_body, page_url) {
+//First regex escapes all caracters that could conflicted with terms used from the dictunary when it is run trough the second function
+var regex = {
+    escape: function(str)
+    {
+        return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+    },
+    term: function(term)
+    {
 
-            //Remove any script tags and their content if they have been added into the body
-            source_body.find('script, .tagcloud, [class*=nav], header, [class*=header], [class*=menu], link, nav, [class*=fb-root], [class*=footer], footer, [class*=extras], [class*=banner], img, [class*=widget]').remove();
+        var flags;
+        flags = 'gi';
+        //console.log(term);
+        term = regex.escape(term);
+        //console.log(term);
+        return new RegExp('\\b(' + term + ')\\b', flags)
 
-            //Make the DOM static and remove all tags to leave only behind the text to use for the search
-            const $content = source_body.html().replace(/<[^>]*>/gi, ' ');
-
-
-            //tools.writeToFile(appRoot + '/tmp/content.txt', $content, false);
-
-
-
-            //see the output of the body content
-            //tools.writeToFile(appRoot + '/tmp/source.html', $('body'));
-
-            //Empty object to be used to store terms in
-            var terms_found = {};
+    }
+}
 
 
-            //First regex escapes all caracters that could conflicted with terms used from the dictunary when it is run trough the second function
-            var regexEscape = function(str)
+var collect = function(source_body, page_url)
+{
+
+    console.log(page_url);
+
+
+    //Remove any script tags and their content if they have been added into the body
+    source_body.find('script, .tagcloud, [class*=nav], header, [class*=header], [class*=menu], link, nav, [class*=fb-root], [class*=footer], footer, [class*=extras], [class*=banner], img, [class*=widget]').remove();
+
+    //Make the DOM static and remove all tags to leave only behind the text to use for the search
+    const $content = source_body.html().replace(/<[^>]*>/gi, ' ');
+
+
+    //tools.writeToFile(appRoot + '/tmp/content.txt', $content, false);
+
+
+
+    //see the output of the body content
+    //tools.writeToFile(appRoot + '/tmp/source.html', $('body'));
+
+    //Empty object to be used to store terms in
+    var terms_found = {};
+
+
+    for (var term_type in terms)
+    {
+
+        //console.log(typeof terms[term_type]);
+
+        for (var term in terms[term_type])
+        {
+
+
+            //console.log(terms[term_type]);
+            //  console.log(term);
+            //Turn all terms to uppercase to make sure if a word was added to the term file twice in different case settings that it is only mentioned once when collected
+            search_term = term.toUpperCase();
+
+            //Search for a metch using a function that looks throught all of the text for the term, will return null if nothing is found.
+            var search_for_match = $content.match(regex.term(search_term));
+
+            //If something is found add it to the object terms_found to be stored in a jons file later
+            if (search_for_match != null)
             {
-                return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                var add_term = terms_found[search_term] = terms_found[search_term] ||
+                {};
+
+                add_term['term_type'] = add_term['term_type'] ||
+                {};
+                add_term['term_type'][term_type] = search_for_match.length;
+
+
             }
-
-            //function to search for terms in a large file(string) of words
-            var reg_term = function(term)
-            {
-
-                var flags;
-                flags = 'gi';
-                //console.log(term);
-                term = regexEscape(term);
-                //console.log(term);
-                return new RegExp('\\b(' + term + ')\\b', flags)
-
-            };
+        }
 
 
-            for (var term_type in terms)
-            {
+    }
 
-                //console.log(typeof terms[term_type]);
-
-                for (var term in terms[term_type])
-                {
-
-
-                    //console.log(terms[term_type]);
-                    //  console.log(term);
-                    //Turn all terms to uppercase to make sure if a word was added to the term file twice in different case settings that it is only mentioned once when collected
-                    search_term = term.toUpperCase();
-
-                    //Search for a metch using a function that looks throught all of the text for the term, will return null if nothing is found.
-                    var search_for_match = $content.match(reg_term(search_term));
-
-                    //If something is found add it to the object terms_found to be stored in a jons file later
-                    if (search_for_match != null)
-                    {
-                        var add_term = terms_found[search_term] = terms_found[search_term] ||
-                        {};
-
-                        add_term['term_type'] = add_term['term_type'] ||
-                        {};
-                        add_term['term_type'][term_type] = search_for_match.length;
-
-
-                    }
-                }
-
-
-            }
-
-            //write out a log file for all terms and their position, -1 if not found
-            //tools.writeToFile(appRoot + '/tmp/logtermsfound.json', log_term_position, true);
-            tools.writeToFile(appRoot + '/tmp/sites/' + page_url + '-termsfound.json', terms_found, true);
+    //write out a log file for all terms and their position, -1 if not found
+    //tools.writeToFile(appRoot + '/tmp/logtermsfound.json', log_term_position, true);
+    tools.writeToFile(appRoot + '/tmp/sites/' + page_url + '-termsfound.json', terms_found, true);
 }
 
 
 var crawl = function(url, header)
 {
     var page_url = url.replace('http://', '');
-        page_url = page_url.replace(/\//g, '-');
-    
-    console.log(page_url);
+    page_url = page_url.replace(/\//g, '_');
 
     reg = request.defaults(
     {
@@ -124,7 +126,7 @@ var crawl = function(url, header)
 
             const $source_body = $('body');
 
-           // tools.writeToFile(appRoot + '/tmp/sites/' + page_url + '.html', $source_body, false);
+            // tools.writeToFile(appRoot + '/tmp/sites/' + page_url + '.html', $source_body, false);
 
             collect($source_body, page_url);
 
@@ -132,18 +134,30 @@ var crawl = function(url, header)
 
             page_links_Object = [];
 
-            page_links.each(function(i) {
-              
-                var next_url = $( this ).attr('href');
+            page_links.each(function()
+            {
+
+                var next_url = $(this).attr('href');
                 page_links_Object.push(next_url);
 
-                if (stop < 50) {
-                    setTimeout(function () {
-                        crawl(next_url);
-                    }, 5000);
-                };
 
-                stop = stop + 1;
+                //Use stop variable to stop afer reaching surten amount of urls and heck if the url begins with http
+                if (stop <= 100 && next_url.substring(0, 4) == "http")
+                {
+                    setTimeout(function()
+                    {
+                        crawl(next_url);
+
+                    }, 10000);
+
+                    stop = stop + 1;
+
+                    console.log("stop is at: " + stop);
+
+                }
+                else {
+                    console.log(next_url.substring(0, 5));
+                }
 
             });
 
