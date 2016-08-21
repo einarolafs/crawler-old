@@ -4,7 +4,7 @@ var fs = require("fs");
 var path = require('path');
 global.appRoot = path.resolve(__dirname);
 
-var crawler = require('./app/tools.js');
+var tools = require('./app/tools.js');
 var crawler = require('./app/crawler.js');
 
 tools.createTmpDir();
