@@ -156,7 +156,7 @@ var crawl = function(url, header)
 
                 }
                 else {
-                    console.log(next_url.substring(0, 5));
+                    //console.log(next_url.substring(0, 4);
                 }
 
             });
