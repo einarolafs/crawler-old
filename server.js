@@ -9,5 +9,5 @@ var crawler = require('./app/crawler.js');
 
 tools.createTmpDir();
 
-crawler.crawl();
+crawler.crawl("http://berlinstartupjobs.com");
 
