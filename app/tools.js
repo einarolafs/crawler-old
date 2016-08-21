@@ -22,4 +22,16 @@ var writeToFile = function(filename, content, json = false)
 
 };
 
+//Create a folder for temporary files meant to be used during development
+var createTmpDir = function()
+{
+    var dir = './tmp';
+
+    if (!fs.existsSync(dir))
+    {
+        fs.mkdirSync(dir);
+    }
+}
+
 exports.writeToFile = writeToFile;
+exports.createTmpDir = createTmpDir;

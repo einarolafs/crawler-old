@@ -34,7 +34,7 @@ var crawl = function(url, header)
 
 
             //write the response to a file
-            tools.writeToFile(appRoot + '/tmp/response.json', response, true);
+            //tools.writeToFile(appRoot + '/tmp/response.json', response, true);
 
             let $ = cheerio.load(body);
 
@@ -49,12 +49,12 @@ var crawl = function(url, header)
             const $content = $source_body.html().replace(/<[^>]*>/gi, ' ');
 
 
-            tools.writeToFile(appRoot + '/tmp/content.txt', $content, false);
+            //tools.writeToFile(appRoot + '/tmp/content.txt', $content, false);
 
 
 
             //see the output of the body content
-            tools.writeToFile(appRoot + '/tmp/source.html', $('body'));
+            //tools.writeToFile(appRoot + '/tmp/source.html', $('body'));
 
             var log_term_position = {};
             var terms_found = {};
