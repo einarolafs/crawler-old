@@ -3,6 +3,8 @@
 var fs = require('fs');
 var tools = require(appRoot + 'tools.js');
 
+//What else do we need here?
+
 var join_terms = function()
 {
     terms = {};
