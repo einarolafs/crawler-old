@@ -33,5 +33,9 @@ var createTmpDir = function()
     }
 }
 
+var loopThroughDomains = function(domain) {
+    var thedomains;
+}
+
 exports.writeToFile = writeToFile;
 exports.createTmpDir = createTmpDir;
