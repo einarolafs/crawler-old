@@ -103,30 +103,7 @@ var crawl = function(url, header) {
     crawlCount = crawlCount + 1;
     //console.log(crawlCount);
 
-    if (url.indexOf('http') == 0) {
-        console.log('get Page Content')
-        
-        getPageContent(url, page_url);
-
-    } else {
-
-        console.log('not a correct url, moving on to the next one')
-
-        linkFileContent = fs.readFileSync(linkFile);
-        linkFileContent = JSON.parse(linkFileContent);
-
-        crawlCount = crawlCount + 1;
-
-         if (crawlCount <= linkFileContent.length) {
-            
-           crawl(linkFileContent[crawlCount]);
-        }
-
-
-
-    }
-
-    
+    getPageContent(url, page_url);
 
 };
 
@@ -172,7 +149,7 @@ function crawlOnSuccess(error, response, body, page_url) {
     collect($source_body, page_url, findNextLink);
 
 
-    function findNextLink(success) {
+    function findNextLink() {
 
 
         //Turn the cheerio DOM code to string and then match with all hrefs in the file
@@ -186,7 +163,7 @@ function crawlOnSuccess(error, response, body, page_url) {
       //  var linkFileSync = fs.existsSync(linkFile);
         let linkFileContent;
 
-        // If a collective link file exists for this domain, than write it out to check and updatec
+        // If a collective link file exists for this domain, than write it out to check and update
    
         linkFileContent = fs.readFileSync(linkFile);
         linkFileContent = JSON.parse(linkFileContent);
@@ -196,7 +173,6 @@ function crawlOnSuccess(error, response, body, page_url) {
 
             pageLinks[count] = pageLinks[count].replace('href="', '');
 
-            //console.log(pageLinks[count]);
 
             if (pageLinks[count].indexOf('mailto') > -1 || pageLinks[count].indexOf('#') == 0) {
                 pageLinks.splice(count, 1);
@@ -211,9 +187,10 @@ function crawlOnSuccess(error, response, body, page_url) {
                 // Check if this url can not be found in the collective link file, if not than add it to the array
                 // console.log('indexOf: ' + linkFileContent.indexOf(pageLinks[count]));
 
-                if (linkFileContent.indexOf(pageLinks[count]) != -1) {
+                if (linkFileContent.indexOf(pageLinks[count]) <= -1) {
                     linkFileContent.push(pageLinks[count]);
-                }
+        
+            }
 
 
 
@@ -229,7 +206,6 @@ function crawlOnSuccess(error, response, body, page_url) {
                     linkContent = pageLinks;
                 }
 */
-                console.log(linkFileContent);
 
                 tools.writeToFile(linkFile, linkFileContent, true);
 
@@ -289,7 +265,7 @@ function crawlOnSuccess(error, response, body, page_url) {
 
 function crawlNextUrl(linkContent) {
 
-   // console.log(linkContent);
+    console.log(linkContent);
 
     //console.log('write a file and crawl next');
 
