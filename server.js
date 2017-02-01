@@ -4,12 +4,32 @@ var fs = require("fs");
 var path = require('path');
 global.appRoot = path.resolve(__dirname);
 
+// Count how many times the crawler has gone through a page
+global.crawlCount = 0;
+
+
 var tools = require('./app/tools.js');
 var crawler = require('./app/crawler.js');
 
 tools.createTmpDir();
 
-crawler.crawl("http://berlinstartupjobs.com");
+const urlToCrawl = process.argv[2];
+global.mainDomain = urlToCrawl.match(/^(?:https?:)?(?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im);
+
+
+global.linkFile = appRoot + '/tmp/' + mainDomain[1] + '-links.json';
+
+tools.writeToFile(linkFile, [process.argv[2]], true);
+
+
+crawler.crawl(urlToCrawl);
+
+// print process.argv
+process.argv.forEach(function (val, index, array) {
+  //console.log(index + ': ' + val);
+});
+
+
 
 /*//Lets require/import the HTTP module
 var http = require('http');

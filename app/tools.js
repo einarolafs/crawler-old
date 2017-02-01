@@ -37,5 +37,10 @@ var loopThroughDomains = function(domain) {
     var thedomains;
 }
 
+var isPathAbsolute = function(path) {
+  return /^(?:\/|[a-z]+:\/\/)/.test(path);
+}
+
 exports.writeToFile = writeToFile;
 exports.createTmpDir = createTmpDir;
+exports.isPathAbsolute = isPathAbsolute;
