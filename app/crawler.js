@@ -38,7 +38,7 @@ var collect = function(source_body, page_url, callback) {
     source_body.find('script, .tagcloud, [class*=nav], header, [class*=header], [class*=menu], link, nav, [class*=fb-root], [class*=footer], footer, [class*=extras], [class*=banner], img, [class*=widget]').remove();
 
     //Make the DOM static and remove all tags to leave only behind the text to use for the search
-    const $content = source_body.html().replace(/<[^>]*>/gi, ' ');
+    const content = source_body.html().replace(/<[^>]*>/gi, ' ');
 
 
     //tools.writeToFile(appRoot + '/tmp/content.txt', $content, false);
@@ -65,7 +65,7 @@ var collect = function(source_body, page_url, callback) {
             search_term = term.toUpperCase();
 
             //Search for a metch using a function that looks through all of the text for the term, will return null if nothing is found.
-            var search_for_match = $content.match(regex.term(search_term));
+            var search_for_match = content.match(regex.term(search_term));
 
             //If something is found add it to the object terms_found to be stored in a jons file later
             if (search_for_match != null) {
@@ -172,102 +172,90 @@ function crawlOnSuccess(error, response, body, page_url) {
         for (count = crawlCount; count < pageLinks.length; count++) {
 
             pageLinks[count] = pageLinks[count].replace('href="', '');
+            //pageLinks[count] = pageLinks[count].replace("href='", '');
 
+        //    if (pageLinks[count].indexOf('twitter') > -1) {
+               // console.log(pageLinks[count]);
+          //  }
 
-            if (pageLinks[count].indexOf('mailto') > -1 || pageLinks[count].indexOf('#') == 0) {
-                pageLinks.splice(count, 1);
+             function trimUrlStrings(callback) {
+                if (pageLinks[count].indexOf('mailto') > -1 || pageLinks[count].indexOf('#') == 0) {
+                    pageLinks.splice(count, 1);
+                } else if (pageLinks[count].indexOf('/') == 0) {
+                    pageLinks[count] = urlToCrawl + pageLinks[count];
+                } else if (pageLinks[count].indexOf('http') == 0) {
+                    if (pageLinks[count].indexOf(urlToCrawl) != 0) {
+                        pageLinks.splice(count, 1);
+                    }
+
+                }
+
+                callback();
             }
 
-            // Check if there is already a collective link file for this domain
-
-            //console.log(pageLinks[count].indexOf('http'));
-
-         
-
-                // Check if this url can not be found in the collective link file, if not than add it to the array
-                // console.log('indexOf: ' + linkFileContent.indexOf(pageLinks[count]));
-
+            function checkLinkAgainstList() {
                 if (linkFileContent.indexOf(pageLinks[count]) <= -1) {
                     linkFileContent.push(pageLinks[count]);
         
-            }
-
-
-
-            // console.log('worked '+ count + ' of ' + pageLinks.length);
-
-            if (count == (pageLinks.length - 1)) {
-
-               /* var linkContent;
-
-                if (linkFileContent) {
-                    linkContent = linkFileContent;
-                } else {
-                    linkContent = pageLinks;
                 }
-*/
 
-                tools.writeToFile(linkFile, linkFileContent, true);
-
-                crawlNextUrl(linkFileContent);
+                writeLinksToFile();
             }
+
+            trimUrlStrings(checkLinkAgainstList);
+
+
+            function writeLinksToFile() {
+
+                 if (count == (pageLinks.length - 1)) {
+
+                  //console.log(linkFileContent);
+
+
+                    function trimHrefFromStrings(callback){
+                         var newFileArray = [];
+
+                         for (i = 0; i < linkFileContent.length; i++) {
+                            //console.log(linkFileContent[i]);
+                            if (linkFileContent[i].indexOf('href') == -1 && linkFileContent[i].indexOf('http') == 0) {
+                                newFileArray.push(linkFileContent[i]);
+
+                                //console.log('spliced');
+                            }
+                        }
+
+                       // console.log('done splicing');
+
+                        callback(newFileArray);
+                    }
+
+                    trimHrefFromStrings(function(newFileArray){
+                        //console.log('write to file');
+                        //console.log(newFileArray);
+                        tools.writeToFile(linkFile, newFileArray, true);
+                    });                   
+
+                    
+
+                    
+                  //  tools.writeToFile(appRoot + '/tmp/linkfile.txt', linkFileContent, false);
+
+                    crawlNextUrl(linkFileContent);
+                }
+            }
+
+           
         }
 
-        // Write a new file with the updated links
 
-
-        //console.log('linkFileContent length is: ' + linkFileContent.length)
-
-
-        // if (callback) callback(linkFileContent[crawlCount]);
-
-        /* 
-          pageLinks.each(function()
-          {
-
-              var next_url = $(this).attr('href');
-              pageLinks_Object.push(next_url);
-
-              if (count == pageLinks.length) {
-
-              };
-
-
-              //Use stop variable to stop after reaching certain amount of url's and heck if the url begins with http
-              if (stop <= 100 && next_url.substring(0, 4) == "http")
-              {
-                  setTimeout(function()
-                  {
-                      crawl(next_url);
-
-                  }, 10000);
-
-                  stop = stop + 1;
-
-                  console.log("stop is at: " + stop);
-
-              }
-              else {
-                  //console.log(next_url.substring(0, 4);
-              }
-
-          });*/
-        // console.log('the length is = ' + typeof pageLinks);
 
         // end of findNextLink() function
     }
 
-    // Function to fire after checking for new urls to add to the collective list file
 
-
-    //tools.writeToFile(appRoot + '/tmp/sites/' + page_url + '-links.json', pageLinks_Object, true);
 }
 
 function crawlNextUrl(linkContent) {
-
-    console.log(linkContent);
-
-    //console.log('write a file and crawl next');
 
     if (crawlCount <= linkContent.length) {
         crawl(linkContent[crawlCount]);
