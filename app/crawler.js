@@ -157,7 +157,7 @@ function crawlOnSuccess(error, response, body, page_url) {
 
         //console.log(pageLinks.length);
 
-        // console.log(pageLinks.length);
+        //console.log(pageLinks);
 
        // linkFile = appRoot + '/tmp/' + mainDomain[1] + '-links.json';
       //  var linkFileSync = fs.existsSync(linkFile);
@@ -165,27 +165,31 @@ function crawlOnSuccess(error, response, body, page_url) {
 
         // If a collective link file exists for this domain, than write it out to check and update
    
-        linkFileContent = fs.readFileSync(linkFile);
-        linkFileContent = JSON.parse(linkFileContent);
+        linkFileContent = JSON.parse(fs.readFileSync(linkFile));
     
 
         for (count = crawlCount; count < pageLinks.length; count++) {
 
             pageLinks[count] = pageLinks[count].replace('href="', '');
-            //pageLinks[count] = pageLinks[count].replace("href='", '');
-
-        //    if (pageLinks[count].indexOf('twitter') > -1) {
-               // console.log(pageLinks[count]);
-          //  }
 
              function trimUrlStrings(callback) {
                 if (pageLinks[count].indexOf('mailto') > -1 || pageLinks[count].indexOf('#') == 0) {
                     pageLinks.splice(count, 1);
+
                 } else if (pageLinks[count].indexOf('/') == 0) {
-                    pageLinks[count] = urlToCrawl + pageLinks[count];
+                    if(urlToCrawl.substr(urlToCrawl.length -1 ) == '/') {
+                    //    console.log('true');
+                        pageLinks[count] = urlToCrawl + pageLinks[count].substr(1);
+                    } else {
+                        pageLinks[count] = urlToCrawl + pageLinks[count];
+                    }
+                  //  console.log(pageLinks[count]);
+                    
+
                 } else if (pageLinks[count].indexOf('http') == 0) {
                     if (pageLinks[count].indexOf(urlToCrawl) != 0) {
                         pageLinks.splice(count, 1);
+                       // console.log(pageLinks[count]);
                     }
 
                 }
@@ -209,7 +213,7 @@ function crawlOnSuccess(error, response, body, page_url) {
 
                  if (count == (pageLinks.length - 1)) {
 
-                  //console.log(linkFileContent);
+                  console.log(linkFileContent);
 
 
                     function trimHrefFromStrings(callback){
