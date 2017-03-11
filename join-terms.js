@@ -1,14 +1,21 @@
 //This function gets all the terms found in the terms folder and creates one object out of them all and saves in a single JSON file. The terms can than be used to search trough crawled data for relivent words and sentances.
 
 var fs = require('fs');
-var tools = require(appRoot + 'tools.js');
+var path = require('path');
+global.appRoot = path.resolve(__dirname);
+var tools = require(appRoot + '/app/tools.js');
+
+//What else do we need here?
+
+tools.createTmpDir();
 
 var join_terms = function()
 {
     terms = {};
 
-    const getPath = require("path").join(__dirname, "terms");
+    const getPath = path.join(__dirname, "terms");
 
+    console.log(getPath);
 
     //Get a list of all the files in the terms folder 
     fs.readdirSync(getPath).forEach(function(file)
@@ -42,3 +49,5 @@ var join_terms = function()
     tools.writeToFile("./tmp/terms.json", terms, true, true);
 
 }
+
+join_terms();
