@@ -1,3 +1,0 @@
-Done creating a ability to store urls in a separate file (line 141).
-
-Now have to find out how to crawl through them and start the process over until all urls have been procest
